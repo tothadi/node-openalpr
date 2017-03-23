@@ -1,6 +1,8 @@
 node-openalpr
 ============
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/securogroup/node-openalpr.svg)](https://greenkeeper.io/)
+
 This package binds [OpenALPR](https://github.com/openalpr/openalpr) with Node.js
 
 Version: 1.1.0 - Released January 4th, 2016
