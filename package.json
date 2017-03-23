@@ -27,7 +27,7 @@
     "url": "git://github.com/netPark/node-openalpr.git"
   },
   "dependencies": {
-    "fs-extra": "^0.23.1",
+    "fs-extra": "^2.1.2",
     "nan": "^2.0.5",
     "node-pre-gyp": "https://github.com/mapbox/node-pre-gyp.git"
   },
