@@ -5,4 +5,4 @@ cd windows
 git checkout v2.1.0
 git submodule update --init --recursive
 
-.\build.ps1 -Configuration Release -Platform x64 -PlatformToolset v120 -CudaGeneration None
+.\build.ps1 -Configuration Release -Platform x64 -PlatformToolset v140 -CudaGeneration None
