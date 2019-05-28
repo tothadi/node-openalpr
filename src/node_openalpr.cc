@@ -205,6 +205,7 @@ NAN_METHOD (IdentifyLicense)
 		
 	LPRQueueItem *item = new LPRQueueItem ();
 	item->buffer = buffer;
+	item->size = size;
 	item->state = state;
 	item->prewarp = prewarp;
 	item->detectRegion = detectRegion;
