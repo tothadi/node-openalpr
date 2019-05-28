@@ -119,6 +119,8 @@ function OpenALPR () {
 		if (!fs.existsSync (path)) {
 			throw "File does exist";
 		}
+
+		const img_buffer = fs.readFileSync(path);
 		
 		if (typeof options === "undefined" || typeof options === "function" || !options) {
 			options = {};
@@ -136,7 +138,44 @@ function OpenALPR () {
 			}
 		}
 		
-		return nativeLPR.IdentifyLicense (path, options.state || "", options.prewarp || "", options.detectRegion || false, regions, function (error, output) {
+		return nativeLPR.IdentifyLicense (img_buffer, img_buffer.length, options.state || "", options.prewarp || "", options.detectRegion || false, regions, function (error, output) {
+			callback (error, JSON.parse (output));
+		});
+	}
+
+	this.IdentifyLicenseBuffer = function (buffer, options, callback) {
+		if (!initialized) {
+			throw "OpenALPR Not Initialized";
+		}
+	
+		if (typeof callback !== "function" && typeof options !== "function") {
+			throw "Callback method required";
+		}
+		else if (typeof options === "function") {
+			callback = options;
+		}
+		
+		// if (!fs.existsSync (path)) {
+		// 	throw "File does exist";
+		// }
+		
+		if (typeof options === "undefined" || typeof options === "function" || !options) {
+			options = {};
+		}
+		
+		var regions = [];
+		if (options.regions && options.regions.length) {
+			for (var r in options.regions) {
+				var region = options.regions[r];
+				if (!region.x || !region.y || !region.width || !region.height) {
+					continue;
+				}
+				
+				regions.push ([region.x, region.y, region.width, region.height]);
+			}
+		}
+		
+		return nativeLPR.IdentifyLicense (buffer, buffer.length, options.state || "", options.prewarp || "", options.detectRegion || false, regions, function (error, output) {
 			callback (error, JSON.parse (output));
 		});
 	}

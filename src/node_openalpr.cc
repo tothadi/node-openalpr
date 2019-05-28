@@ -22,7 +22,8 @@ bool running = false;
 class LPRQueueItem 
 {
 	public:	
-		char *path;
+		char *buffer;
+		unsigned int size;
 		char *state;
 		std::string prewarp;
 		bool detectRegion = false;
@@ -49,12 +50,14 @@ class LPR {
 			this->openalpr->setDefaultRegion (queueItem->state);
 			this->openalpr->setDetectRegion (queueItem->detectRegion);
 			this->openalpr->setPrewarp(queueItem->prewarp);
-			std::ifstream ifs (queueItem->path, std::ios::binary|std::ios::ate);
-			std::ifstream::pos_type pos = ifs.tellg ();
-			std::vector<char>  buffer(pos);
-			ifs.seekg(0, std::ios::beg);
-			ifs.read(&buffer[0], pos);
-			
+			// std::ifstream ifs (queueItem->path, std::ios::binary|std::ios::ate);
+			// std::ifstream::pos_type pos = ifs.tellg ();
+			// std::vector<char>  buffer(pos);
+			// ifs.seekg(0, std::ios::beg);
+			// ifs.read(&buffer[0], pos);
+
+			std::vector<char> buffer(queueItem->buffer, queueItem->buffer + queueItem->size);
+    			
 			if (queueItem->regions.size ()) {
 				return this->openalpr->recognize (buffer, queueItem->regions);
 			}
@@ -181,12 +184,14 @@ NAN_METHOD (IdentifyLicense)
 	uv_mutex_lock (&listMutex);
 
 	// Settings	
-	char *path = get (info[0]);
-	char *state = get (info[1]);
-	char *prewarp = get (info[2]);
-	bool detectRegion = info[3]->BooleanValue ();
-	Local<Array> regionsArray = info[4].As<Array> ();
-	Nan::Callback *callback = new Nan::Callback (info[5].As<Function>());
+	// char *path = get (info[0]);
+	char* buffer = (char*) node::Buffer::Data(info[0]->ToObject());
+    unsigned int size = info[1]->Uint32Value();
+	char *state = get (info[2]);
+	char *prewarp = get (info[3]);
+	bool detectRegion = info[4]->BooleanValue ();
+	Local<Array> regionsArray = info[5].As<Array> ();
+	Nan::Callback *callback = new Nan::Callback (info[6].As<Function>());
 	
 	std::vector<alpr::AlprRegionOfInterest> regions;
 	for (int i = 0; i < regionsArray->Length (); i++) {
@@ -199,7 +204,7 @@ NAN_METHOD (IdentifyLicense)
 	}
 		
 	LPRQueueItem *item = new LPRQueueItem ();
-	item->path = path;
+	item->buffer = buffer;
 	item->state = state;
 	item->prewarp = prewarp;
 	item->detectRegion = detectRegion;
